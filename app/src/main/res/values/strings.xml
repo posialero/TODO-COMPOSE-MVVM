@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TODO-COMPOSE-MVVM</string>
+    <string name="add_button">Add Button</string>
 </resources>
