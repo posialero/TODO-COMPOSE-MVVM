@@ -1,4 +1,4 @@
-package com.example.todo_compose_mvvm.ui.theme
+package com.example.todo_compose_mvvm.di
 
 import android.content.Context
 import androidx.room.Room
