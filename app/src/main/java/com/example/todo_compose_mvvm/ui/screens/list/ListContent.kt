@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,10 +21,40 @@ import com.example.todo_compose_mvvm.data.models.Priority
 import com.example.todo_compose_mvvm.data.models.ToDoTask
 import com.example.todo_compose_mvvm.ui.theme.LARGE_PADDING
 import com.example.todo_compose_mvvm.ui.theme.PRIORITY_INDICATOR_SIZE
+import com.example.todo_compose_mvvm.util.RequestState
 
 @Composable
-fun ListContent() {
+fun ListContent(
+    tasks: RequestState<List<ToDoTask>>,
+    navigateToTaskScreen: (taskId: Int) -> Unit
+) {
+    if (tasks is RequestState.Success) {
+        if (tasks.data.isEmpty()) {
+            EmptyContent()
+        } else {
+            DisplayTasks(tasks = tasks.data, navigateToTaskScreen = navigateToTaskScreen)
+        }
+    }
+}
 
+@Composable
+fun DisplayTasks(
+    tasks: List<ToDoTask>,
+    navigateToTaskScreen: (taskId: Int) -> Unit
+) {
+    LazyColumn {
+        items(
+            items = tasks,
+            key = { task ->
+                task.id
+            }
+        ) { task ->
+            TaskItem(
+                toDoTask = task,
+                navigateToTaskScreen = navigateToTaskScreen
+            )
+        }
+    }
 }
 
 @Composable
@@ -30,6 +62,7 @@ fun TaskItem(
     toDoTask: ToDoTask,
     navigateToTaskScreen: (taskId: Int) -> Unit
 ) {
+
     Surface(
         modifier = Modifier
             .fillMaxWidth(),
