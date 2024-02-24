@@ -34,6 +34,7 @@ import com.example.todo_compose_mvvm.data.models.Priority
 import com.example.todo_compose_mvvm.ui.theme.LARGE_PADDING
 import com.example.todo_compose_mvvm.ui.theme.TOP_APP_BAR_HEIGHT
 import com.example.todo_compose_mvvm.ui.viewmodels.SharedViewModel
+import com.example.todo_compose_mvvm.util.Action
 import com.example.todo_compose_mvvm.util.SearchAppBarState
 import com.example.todo_compose_mvvm.util.TrailingIconState
 
@@ -50,7 +51,9 @@ fun ListAppBar(
                     sharedViewModel.searchAppBarState.value = SearchAppBarState.OPENED
                 },
                 onSortClicked = {},
-                onDeleteClicked = {}
+                onDeleteAllClicked = {
+                    sharedViewModel.action.value = Action.DELETE_ALL
+                }
             )
         }
         else -> {
@@ -63,7 +66,9 @@ fun ListAppBar(
                     sharedViewModel.searchAppBarState.value = SearchAppBarState.CLOSED
                     sharedViewModel.searchTextState.value = ""
                 },
-                onSearchClicked = {}
+                onSearchClicked = {
+                    sharedViewModel.searchDatabase(searchQuery = it)
+                }
             )
         }
     }
@@ -74,7 +79,7 @@ fun ListAppBar(
 fun DefaultListAppBar(
     onSearchClicked: () -> Unit,
     onSortClicked: (Priority) -> Unit,
-    onDeleteClicked: () -> Unit
+    onDeleteAllClicked: () -> Unit
 ) {
     TopAppBar(
         title = {
@@ -84,7 +89,7 @@ fun DefaultListAppBar(
             ListAppBarActions(
                 onSearchClicked = onSearchClicked,
                 onSortClicked = onSortClicked,
-                onDeleteClicked = onDeleteClicked
+                onDeleteClicked = onDeleteAllClicked
             )
         }
     )
@@ -290,7 +295,7 @@ private fun DefaultListAppBarPreview() {
     DefaultListAppBar(
         onSearchClicked = {},
         onSortClicked = {},
-        onDeleteClicked = {}
+        onDeleteAllClicked = {}
     )
 }
 

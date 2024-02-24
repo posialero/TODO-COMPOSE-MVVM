@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -31,9 +32,13 @@ fun ListScreen(
         sharedViewModel.getAllTasks()
     }
 
+    val action by sharedViewModel.action
     val allTasks by sharedViewModel.allTasks.collectAsState()
+    val searchTasks by sharedViewModel.searchedTasks.collectAsState()
     val searchAppBarState: SearchAppBarState by sharedViewModel.searchAppBarState
     val searchTextState: String by sharedViewModel.searchTextState
+
+    sharedViewModel.handleDatabaseActions(action = action)
 
     Scaffold(
         topBar = {
@@ -49,8 +54,10 @@ fun ListScreen(
                     .padding(it)
             ) {
                 ListContent(
-                    allTasks,
-                    navigateToTaskScreen
+                    searchTasks = searchTasks,
+                    allTasks = allTasks,
+                    navigateToTaskScreen = navigateToTaskScreen,
+                    searchAppBarState = searchAppBarState
                 )
             }
         },

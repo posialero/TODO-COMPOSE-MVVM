@@ -1,5 +1,6 @@
 package com.example.todo_compose_mvvm.ui.screens.list
 
+import android.view.PixelCopy.Request
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,19 +23,37 @@ import com.example.todo_compose_mvvm.data.models.ToDoTask
 import com.example.todo_compose_mvvm.ui.theme.LARGE_PADDING
 import com.example.todo_compose_mvvm.ui.theme.PRIORITY_INDICATOR_SIZE
 import com.example.todo_compose_mvvm.util.RequestState
+import com.example.todo_compose_mvvm.util.SearchAppBarState
 
 @Composable
 fun ListContent(
-    tasks: RequestState<List<ToDoTask>>,
-    navigateToTaskScreen: (taskId: Int) -> Unit
+    searchTasks: RequestState<List<ToDoTask>>,
+    allTasks: RequestState<List<ToDoTask>>,
+    navigateToTaskScreen: (taskId: Int) -> Unit,
+    searchAppBarState: SearchAppBarState
 ) {
-    if (tasks is RequestState.Success) {
-        if (tasks.data.isEmpty()) {
-            EmptyContent()
-        } else {
-            DisplayTasks(tasks = tasks.data, navigateToTaskScreen = navigateToTaskScreen)
+    if (searchAppBarState == SearchAppBarState.TRIGGERED) {
+        if (searchTasks is RequestState.Success) {
+            HandleListContent(tasks = searchTasks.data, navigateToTaskScreen = navigateToTaskScreen)
+        }
+    } else {
+        if (allTasks is RequestState.Success) {
+            HandleListContent(tasks = allTasks.data, navigateToTaskScreen = navigateToTaskScreen)
         }
     }
+}
+
+@Composable
+fun HandleListContent(
+    tasks: List<ToDoTask>,
+    navigateToTaskScreen: (taskId: Int) -> Unit
+) {
+    if (tasks.isEmpty()) {
+        EmptyContent()
+    } else {
+        DisplayTasks(tasks = tasks, navigateToTaskScreen = navigateToTaskScreen)
+    }
+
 }
 
 @Composable
@@ -96,7 +115,7 @@ fun TaskItem(
                             color = toDoTask.priority.color
                         )
                     }
-                    
+
                 }
             }
             Text(
