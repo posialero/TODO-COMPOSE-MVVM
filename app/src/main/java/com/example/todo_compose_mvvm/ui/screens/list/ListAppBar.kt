@@ -143,33 +143,17 @@ fun SortAction(
                 expended = false
             }
         ) {
-            DropdownMenuItem(
-                text = {
-                    PriorityItem(priority = Priority.LOW)
-                },
-                onClick = {
-                    expended = false
-                    onSortClicked(Priority.LOW)
-                }
-            )
-            DropdownMenuItem(
-                text = {
-                    PriorityItem(priority = Priority.HIGH)
-                },
-                onClick = {
-                    expended = false
-                    onSortClicked(Priority.HIGH)
-                }
-            )
-            DropdownMenuItem(
-                text = {
-                    PriorityItem(priority = Priority.NONE)
-                },
-                onClick = {
-                    expended = false
-                    onSortClicked(Priority.NONE)
-                }
-            )
+            Priority.entries.slice(setOf(0, 2, 3)).forEach { priority ->
+                DropdownMenuItem(
+                    text = {
+                        PriorityItem(priority = priority)
+                    },
+                    onClick = {
+                        expended = false
+                        onSortClicked(priority)
+                    }
+                )
+            }
         }
     }
 }
