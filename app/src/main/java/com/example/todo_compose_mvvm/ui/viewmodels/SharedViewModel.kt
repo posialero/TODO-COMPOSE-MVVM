@@ -1,5 +1,6 @@
 package com.example.todo_compose_mvvm.ui.viewmodels
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -53,7 +54,31 @@ class SharedViewModel @Inject constructor(
         MutableStateFlow<ToDoTask?>(null)
     val selectedTask: StateFlow<ToDoTask?> = _selectedTask
 
-    fun getAllTasks() {
+    private val _sortState =
+        MutableStateFlow<RequestState<Priority>>(RequestState.Idle)
+    val sortState: StateFlow<RequestState<Priority>> = _sortState
+
+    val lowPriorityTasks: StateFlow<List<ToDoTask>> =
+        repository.sortByLowPriority.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            emptyList()
+        )
+
+    val highPriorityTasks: StateFlow<List<ToDoTask>> =
+        repository.sortByHighPriority.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            emptyList()
+        )
+
+
+    init {
+        getAllTasks()
+        readSortState()
+    }
+
+    private fun getAllTasks() {
         _allTasks.value = RequestState.Loading
         try {
             viewModelScope.launch {
@@ -80,31 +105,13 @@ class SharedViewModel @Inject constructor(
         searchAppBarState.value = SearchAppBarState.TRIGGERED
     }
 
-    private val _sortState =
-        MutableStateFlow<RequestState<Priority>>(RequestState.Idle)
-    val sortState: StateFlow<RequestState<Priority>> = _sortState
-
-    val lowPriorityTasks: StateFlow<List<ToDoTask>> =
-        repository.sortByLowPriority.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            emptyList()
-        )
-
-    val highPriorityTasks: StateFlow<List<ToDoTask>> =
-        repository.sortByHighPriority.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            emptyList()
-        )
-
     fun persistSortState(priority: Priority) {
         viewModelScope.launch(Dispatchers.IO) {
             dataStoreRepository.persistSortState(priority = priority)
         }
     }
 
-    fun readSortState() {
+    private fun readSortState() {
         _sortState.value = RequestState.Loading
         try {
             viewModelScope.launch {
@@ -178,18 +185,23 @@ class SharedViewModel @Inject constructor(
             Action.ADD -> {
                 addTask()
             }
+
             Action.DELETE -> {
                 deleteTask()
             }
+
             Action.DELETE_ALL -> {
                 deleteAllTasks()
             }
+
             Action.UPDATE -> {
                 updateTask()
             }
+
             Action.UNDO -> {
 
             }
+
             else -> {
 
             }

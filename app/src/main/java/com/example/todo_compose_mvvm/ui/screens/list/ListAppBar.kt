@@ -36,7 +36,6 @@ import com.example.todo_compose_mvvm.ui.theme.TOP_APP_BAR_HEIGHT
 import com.example.todo_compose_mvvm.ui.viewmodels.SharedViewModel
 import com.example.todo_compose_mvvm.util.Action
 import com.example.todo_compose_mvvm.util.SearchAppBarState
-import com.example.todo_compose_mvvm.util.TrailingIconState
 
 @Composable
 fun ListAppBar(
@@ -223,8 +222,6 @@ fun SearchAppBar(
     onCloseClicked: () -> Unit,
     onSearchClicked: (String) -> Unit
 ) {
-    var trailingIconState by remember { mutableStateOf(TrailingIconState.READY_TO_DELETE) }
-
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -257,20 +254,10 @@ fun SearchAppBar(
             trailingIcon = {
                 IconButton(
                     onClick = {
-                        when (trailingIconState) {
-                            TrailingIconState.READY_TO_DELETE -> {
-                                onTextChanged("")
-                                trailingIconState = TrailingIconState.READY_TO_CLOSE
-                            }
-
-                            TrailingIconState.READY_TO_CLOSE -> {
-                                if (text.isNotBlank()) {
-                                    onTextChanged("")
-                                } else {
-                                    onCloseClicked()
-                                    trailingIconState = TrailingIconState.READY_TO_DELETE
-                                }
-                            }
+                        if (text.isNotEmpty()) {
+                            onTextChanged("")
+                        } else {
+                            onCloseClicked()
                         }
                     }
                 ) {
