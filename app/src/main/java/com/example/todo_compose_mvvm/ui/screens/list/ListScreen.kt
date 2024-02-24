@@ -40,8 +40,8 @@ fun ListScreen(
     val lowPriorityTasks by sharedViewModel.lowPriorityTasks.collectAsState()
     val highPriorityTasks by sharedViewModel.highPriorityTasks.collectAsState()
 
-    val searchAppBarState: SearchAppBarState by sharedViewModel.searchAppBarState
-    val searchTextState: String by sharedViewModel.searchTextState
+    val searchAppBarState = sharedViewModel.searchAppBarState
+    val searchTextState = sharedViewModel.searchTextState
 
     sharedViewModel.handleDatabaseActions(action = action)
 
@@ -67,7 +67,7 @@ fun ListScreen(
                     navigateToTaskScreen = navigateToTaskScreen,
                     searchAppBarState = searchAppBarState,
                     onSwipeToDelete = { action, task ->
-                        sharedViewModel.action.value = action
+                        sharedViewModel.updateAction(action)
                         sharedViewModel.updateTaskFields(selectedTask = task)
                     }
                 )
