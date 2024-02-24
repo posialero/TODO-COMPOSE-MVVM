@@ -44,18 +44,21 @@ fun ListAppBar(
     searchAppBarState: SearchAppBarState,
     searchTextState: String
 ) {
-    when(searchAppBarState) {
+    when (searchAppBarState) {
         SearchAppBarState.CLOSED -> {
             DefaultListAppBar(
                 onSearchClicked = {
                     sharedViewModel.searchAppBarState.value = SearchAppBarState.OPENED
                 },
-                onSortClicked = {},
+                onSortClicked = {
+                    sharedViewModel.persistSortState(it)
+                },
                 onDeleteAllClicked = {
                     sharedViewModel.action.value = Action.DELETE_ALL
                 }
             )
         }
+
         else -> {
             SearchAppBar(
                 text = searchTextState,
@@ -152,20 +155,20 @@ fun SortAction(
             )
             DropdownMenuItem(
                 text = {
-                    PriorityItem(priority = Priority.MEDIUM)
-                },
-                onClick = {
-                    expended = false
-                    onSortClicked(Priority.MEDIUM)
-                }
-            )
-            DropdownMenuItem(
-                text = {
                     PriorityItem(priority = Priority.HIGH)
                 },
                 onClick = {
                     expended = false
                     onSortClicked(Priority.HIGH)
+                }
+            )
+            DropdownMenuItem(
+                text = {
+                    PriorityItem(priority = Priority.NONE)
+                },
+                onClick = {
+                    expended = false
+                    onSortClicked(Priority.NONE)
                 }
             )
         }
@@ -197,12 +200,12 @@ fun DeleteAllAction(
         ) {
             DropdownMenuItem(
                 text = {
-                       Text(
-                           modifier = Modifier.padding(
-                               start = LARGE_PADDING
-                           ),
-                           text = stringResource(id = R.string.delete_all_action)
-                       )
+                    Text(
+                        modifier = Modifier.padding(
+                            start = LARGE_PADDING
+                        ),
+                        text = stringResource(id = R.string.delete_all_action)
+                    )
                 },
                 onClick = {
                     expended = false
@@ -217,7 +220,7 @@ fun DeleteAllAction(
 fun SearchAppBar(
     text: String,
     onTextChanged: (String) -> Unit,
-    onCloseClicked: ()-> Unit,
+    onCloseClicked: () -> Unit,
     onSearchClicked: (String) -> Unit
 ) {
     var trailingIconState by remember { mutableStateOf(TrailingIconState.READY_TO_DELETE) }
@@ -254,11 +257,12 @@ fun SearchAppBar(
             trailingIcon = {
                 IconButton(
                     onClick = {
-                        when(trailingIconState) {
+                        when (trailingIconState) {
                             TrailingIconState.READY_TO_DELETE -> {
                                 onTextChanged("")
                                 trailingIconState = TrailingIconState.READY_TO_CLOSE
                             }
+
                             TrailingIconState.READY_TO_CLOSE -> {
                                 if (text.isNotBlank()) {
                                     onTextChanged("")

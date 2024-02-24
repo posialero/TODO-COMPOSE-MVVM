@@ -27,18 +27,32 @@ import com.example.todo_compose_mvvm.util.SearchAppBarState
 
 @Composable
 fun ListContent(
+    lowPriorityTasks: List<ToDoTask>,
+    highPriorityTasks: List<ToDoTask>,
+    sortState: RequestState<Priority>,
     searchTasks: RequestState<List<ToDoTask>>,
     allTasks: RequestState<List<ToDoTask>>,
     navigateToTaskScreen: (taskId: Int) -> Unit,
     searchAppBarState: SearchAppBarState
 ) {
-    if (searchAppBarState == SearchAppBarState.TRIGGERED) {
-        if (searchTasks is RequestState.Success) {
-            HandleListContent(tasks = searchTasks.data, navigateToTaskScreen = navigateToTaskScreen)
-        }
-    } else {
-        if (allTasks is RequestState.Success) {
-            HandleListContent(tasks = allTasks.data, navigateToTaskScreen = navigateToTaskScreen)
+    if (sortState is RequestState.Success) {
+        when {
+            searchAppBarState == SearchAppBarState.TRIGGERED -> {
+                if (searchTasks is RequestState.Success) {
+                    HandleListContent(tasks = searchTasks.data, navigateToTaskScreen = navigateToTaskScreen)
+                }
+            }
+            sortState.data == Priority.NONE -> {
+                if (allTasks is RequestState.Success) {
+                    HandleListContent(tasks = allTasks.data, navigateToTaskScreen = navigateToTaskScreen)
+                }
+            }
+            sortState.data == Priority.LOW -> {
+                HandleListContent(tasks = lowPriorityTasks, navigateToTaskScreen = navigateToTaskScreen)
+            }
+            sortState.data == Priority.HIGH -> {
+                HandleListContent(tasks = highPriorityTasks, navigateToTaskScreen = navigateToTaskScreen)
+            }
         }
     }
 }
