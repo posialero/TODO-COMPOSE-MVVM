@@ -12,3 +12,5 @@ val TOP_APP_BAR_HEIGHT = 56.dp
 
 val PRIORITY_DROP_DOWN_HEIGHT = 60.dp
 
+val LOGO_SIZE = 100.dp
+

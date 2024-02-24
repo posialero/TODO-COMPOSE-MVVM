@@ -17,4 +17,5 @@
     <string name="drop_down_arrow">Drop Down Arrow</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
+    <string name="todo_logo">Logo</string>
 </resources>

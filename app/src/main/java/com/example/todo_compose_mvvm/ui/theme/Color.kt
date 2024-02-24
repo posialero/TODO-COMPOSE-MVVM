@@ -1,5 +1,7 @@
 package com.example.todo_compose_mvvm.ui.theme
 
+import androidx.compose.material3.ColorScheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
@@ -18,3 +20,7 @@ val LowPriorityColor = Color(0xFF00C980)
 val MediumPriorityColor = Color(0xFFFFC114)
 val HighPriorityColor = Color(0xFFFF4646)
 val NonePriorityColor = MediumGray
+
+val ColorScheme.splashScreenBackground: Color
+    @Composable
+    get() = Color.White
