@@ -8,7 +8,6 @@ import com.example.todo_compose_mvvm.navigation.destinations.listComposable
 import com.example.todo_compose_mvvm.navigation.destinations.taskComposable
 import com.example.todo_compose_mvvm.ui.viewmodels.SharedViewModel
 import com.example.todo_compose_mvvm.util.Constants.LIST_SCREEN
-import com.example.todo_compose_mvvm.util.Constants.SPLASH_SCREEN
 
 @Composable
 fun SetupNavigation(

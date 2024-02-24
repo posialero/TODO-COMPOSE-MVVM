@@ -14,3 +14,5 @@ val PRIORITY_DROP_DOWN_HEIGHT = 60.dp
 
 val LOGO_SIZE = 100.dp
 
+val TASK_ITEM_ELEVATION = 2.dp
+

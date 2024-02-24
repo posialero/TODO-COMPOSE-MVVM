@@ -8,8 +8,11 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -42,15 +45,20 @@ fun NewTaskAppBar(
         },
         title = {
             Text(
-                text = stringResource(id = R.string.add_task)
+                text = stringResource(id = R.string.add_task),
+                color = MaterialTheme.colorScheme.onPrimary
             )
         },
         actions = {
             AddAction(onAddClicked = navigateToListScreen)
-        }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        )
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BackAction(
     onBackClicked: (Action) -> Unit
@@ -58,11 +66,13 @@ fun BackAction(
     IconButton(onClick = { onBackClicked(Action.NO_ACTION) }) {
         Icon(
             imageVector = Icons.Filled.ArrowBack,
-            contentDescription = stringResource(id = R.string.back_arrow)
+            contentDescription = stringResource(id = R.string.back_arrow),
+            tint = MaterialTheme.colorScheme.onPrimary
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddAction(
     onAddClicked: (Action) -> Unit
@@ -70,7 +80,8 @@ fun AddAction(
     IconButton(onClick = { onAddClicked(Action.ADD) }) {
         Icon(
             imageVector = Icons.Filled.Check,
-            contentDescription = stringResource(id = R.string.add_task)
+            contentDescription = stringResource(id = R.string.add_task),
+            tint = MaterialTheme.colorScheme.onPrimary
         )
     }
 }
@@ -89,16 +100,21 @@ fun ExistingTaskAppBar(
             Text(
                 text = selectedTask.title,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onPrimary
             )
         },
         actions = {
             DeleteAction(onDeleteClicked = navigateToListScreen)
             UpdateAction(onUpdateClicked = navigateToListScreen)
-        }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor =  MaterialTheme.colorScheme.primary
+        )
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CloseAction(
     onCloseClicked: (Action) -> Unit
@@ -106,11 +122,13 @@ fun CloseAction(
     IconButton(onClick = { onCloseClicked(Action.NO_ACTION) }) {
         Icon(
             imageVector = Icons.Filled.Close,
-            contentDescription = stringResource(id = R.string.close_icon)
+            contentDescription = stringResource(id = R.string.close_icon),
+            tint = MaterialTheme.colorScheme.onPrimary
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeleteAction(
     onDeleteClicked: (Action) -> Unit
@@ -118,11 +136,13 @@ fun DeleteAction(
     IconButton(onClick = { onDeleteClicked(Action.DELETE) }) {
         Icon(
             imageVector = Icons.Filled.Delete,
-            contentDescription = stringResource(id = R.string.delete_icon)
+            contentDescription = stringResource(id = R.string.delete_icon),
+            tint = MaterialTheme.colorScheme.onPrimary
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdateAction(
     onUpdateClicked: (Action) -> Unit
@@ -130,7 +150,8 @@ fun UpdateAction(
     IconButton(onClick = { onUpdateClicked(Action.UPDATE) }) {
         Icon(
             imageVector = Icons.Filled.Check,
-            contentDescription = stringResource(id = R.string.update_icon)
+            contentDescription = stringResource(id = R.string.update_icon),
+            tint = MaterialTheme.colorScheme.onPrimary
         )
     }
 }

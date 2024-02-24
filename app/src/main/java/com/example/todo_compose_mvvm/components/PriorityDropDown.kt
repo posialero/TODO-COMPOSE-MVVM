@@ -2,12 +2,12 @@ package com.example.todo_compose_mvvm.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -27,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -36,10 +35,8 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.example.todo_compose_mvvm.R
 import com.example.todo_compose_mvvm.data.models.Priority
-import com.example.todo_compose_mvvm.ui.theme.LARGE_PADDING
 import com.example.todo_compose_mvvm.ui.theme.PRIORITY_DROP_DOWN_HEIGHT
 import com.example.todo_compose_mvvm.ui.theme.PRIORITY_INDICATOR_SIZE
-import kotlin.math.exp
 
 @Composable
 fun PriorityDropDown(
@@ -61,11 +58,14 @@ fun PriorityDropDown(
             .onGloballyPositioned {
                 parentSize = it.size
             }
+            .background(MaterialTheme.colorScheme.background)
             .height(PRIORITY_DROP_DOWN_HEIGHT)
             .clickable { expanded = true }
             .border(
                 width = 1.dp,
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.onSurface.copy(
+                    alpha = 0.38f
+                ),
                 shape = MaterialTheme.shapes.small
             ),
         verticalAlignment = Alignment.CenterVertically
@@ -81,10 +81,12 @@ fun PriorityDropDown(
         }
         Text(
             modifier = Modifier.weight(8f),
-            text = priority.name
+            text = priority.name,
+            style = MaterialTheme.typography.bodyMedium
         )
         IconButton(
             modifier = Modifier
+                .alpha(0.5f)
                 .rotate(degrees = angle)
                 .weight(1.5f),
             onClick = {

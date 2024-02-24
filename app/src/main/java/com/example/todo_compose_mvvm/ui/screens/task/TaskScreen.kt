@@ -55,26 +55,26 @@ fun TaskScreen(
 
             }
         },
-        content = {
-            Column(
-                modifier = Modifier
-                    .padding(it)
-            ) {
-                TaskContent(
-                    title = title,
-                    onTitleChange = { title ->
-                        sharedViewModel.updateTitle(title)
-                    },
-                    description = description,
-                    onDescriptionChange = { description ->
-                        sharedViewModel.updateDescription(description)
-                    },
-                    priority = priority,
-                    onPrioritySelected = { priority ->
-                        sharedViewModel.updatePriority(priority)
-                    }
-                )
-            }
+        content = { padding ->
+            TaskContent(
+                modifier = Modifier.padding(
+                    top = padding.calculateTopPadding(),
+                    bottom = padding.calculateBottomPadding()
+                ),
+                title = title,
+                onTitleChange = { title ->
+                    sharedViewModel.updateTitle(title)
+                },
+                description = description,
+                onDescriptionChange = { description ->
+                    sharedViewModel.updateDescription(description)
+                },
+                priority = priority,
+                onPrioritySelected = { priority ->
+                    sharedViewModel.updatePriority(priority)
+                }
+            )
+
         }
     )
 }

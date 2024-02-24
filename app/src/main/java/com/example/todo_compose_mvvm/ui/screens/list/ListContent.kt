@@ -1,7 +1,6 @@
 package com.example.todo_compose_mvvm.ui.screens.list
 
 import android.annotation.SuppressLint
-import android.view.PixelCopy.Request
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -21,14 +20,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.DismissDirection
-import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.SwipeToDismiss
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,16 +41,17 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.todo_compose_mvvm.R
 import com.example.todo_compose_mvvm.data.models.Priority
 import com.example.todo_compose_mvvm.data.models.ToDoTask
-import com.example.todo_compose_mvvm.ui.theme.HighPriorityColor
 import com.example.todo_compose_mvvm.ui.theme.LARGEST_PADDING
 import com.example.todo_compose_mvvm.ui.theme.LARGE_PADDING
 import com.example.todo_compose_mvvm.ui.theme.PRIORITY_INDICATOR_SIZE
+import com.example.todo_compose_mvvm.ui.theme.TASK_ITEM_ELEVATION
 import com.example.todo_compose_mvvm.util.Action
 import com.example.todo_compose_mvvm.util.RequestState
 import com.example.todo_compose_mvvm.util.SearchAppBarState
@@ -60,6 +60,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ListContent(
+    modifier: Modifier = Modifier,
     lowPriorityTasks: List<ToDoTask>,
     highPriorityTasks: List<ToDoTask>,
     sortState: RequestState<Priority>,
@@ -74,6 +75,7 @@ fun ListContent(
             searchAppBarState == SearchAppBarState.TRIGGERED -> {
                 if (searchTasks is RequestState.Success) {
                     HandleListContent(
+                        modifier = modifier,
                         tasks = searchTasks.data,
                         navigateToTaskScreen = navigateToTaskScreen,
                         onSwipeToDelete = onSwipeToDelete
@@ -84,6 +86,7 @@ fun ListContent(
             sortState.data == Priority.NONE -> {
                 if (allTasks is RequestState.Success) {
                     HandleListContent(
+                        modifier = modifier,
                         tasks = allTasks.data,
                         navigateToTaskScreen = navigateToTaskScreen,
                         onSwipeToDelete = onSwipeToDelete
@@ -93,6 +96,7 @@ fun ListContent(
 
             sortState.data == Priority.LOW -> {
                 HandleListContent(
+                    modifier = modifier,
                     tasks = lowPriorityTasks,
                     navigateToTaskScreen = navigateToTaskScreen,
                     onSwipeToDelete = onSwipeToDelete
@@ -101,6 +105,7 @@ fun ListContent(
 
             sortState.data == Priority.HIGH -> {
                 HandleListContent(
+                    modifier = modifier,
                     tasks = highPriorityTasks,
                     navigateToTaskScreen = navigateToTaskScreen,
                     onSwipeToDelete = onSwipeToDelete
@@ -112,6 +117,7 @@ fun ListContent(
 
 @Composable
 fun HandleListContent(
+    modifier: Modifier = Modifier,
     tasks: List<ToDoTask>,
     navigateToTaskScreen: (taskId: Int) -> Unit,
     onSwipeToDelete: (Action, ToDoTask) -> Unit
@@ -120,6 +126,7 @@ fun HandleListContent(
         EmptyContent()
     } else {
         DisplayTasks(
+            modifier = modifier,
             tasks = tasks,
             navigateToTaskScreen = navigateToTaskScreen,
             onSwipeToDelete = onSwipeToDelete
@@ -132,22 +139,24 @@ fun HandleListContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DisplayTasks(
+    modifier: Modifier,
     tasks: List<ToDoTask>,
     navigateToTaskScreen: (taskId: Int) -> Unit,
     onSwipeToDelete: (Action, ToDoTask) -> Unit
 ) {
-    LazyColumn {
+    LazyColumn(
+        modifier = modifier
+    ) {
         items(
             items = tasks,
             key = { task ->
                 task.id
             }
         ) { task ->
-            val dismissState = rememberDismissState()
+            val dismissState = rememberSwipeToDismissBoxState()
             val dismissDirection = dismissState.dismissDirection
-            val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
 
-            if (isDismissed && dismissDirection == DismissDirection.EndToStart) {
+            if (dismissDirection == SwipeToDismissBoxValue.EndToStart) {
                 val scope = rememberCoroutineScope()
                 scope.launch {
                     delay(300)
@@ -156,7 +165,7 @@ fun DisplayTasks(
             }
 
             val degrees by animateFloatAsState(
-                targetValue = if (dismissState.targetValue == DismissValue.Default)
+                targetValue = if (dismissState.targetValue == SwipeToDismissBoxValue.Settled)
                     0f
                 else
                     -45f,
@@ -170,7 +179,7 @@ fun DisplayTasks(
             }
 
             AnimatedVisibility(
-                visible = itemAppeared && !isDismissed,
+                visible = itemAppeared,
                 enter = expandVertically(
                     animationSpec = tween(
                         durationMillis = 300
@@ -183,16 +192,17 @@ fun DisplayTasks(
                 )
 
             ) {
-                SwipeToDismiss(
+                SwipeToDismissBox(
                     state = dismissState,
-                    background = { RedBackground(degrees = degrees) },
-                    dismissContent = {
+                    backgroundContent = { RedBackground(degrees = degrees) },
+                    content = {
                         TaskItem(
                             toDoTask = task,
                             navigateToTaskScreen = navigateToTaskScreen
                         )
                     },
-                    directions = setOf(DismissDirection.EndToStart)
+                    enableDismissFromEndToStart = true,
+                    enableDismissFromStartToEnd = false
                 )
             }
         }
@@ -211,7 +221,8 @@ fun TaskItem(
         shape = RectangleShape,
         onClick = {
             navigateToTaskScreen(toDoTask.id)
-        }
+        },
+        shadowElevation = TASK_ITEM_ELEVATION
     ) {
         Column(
             modifier = Modifier
@@ -222,6 +233,8 @@ fun TaskItem(
                 Text(
                     modifier = Modifier.weight(8f),
                     text = toDoTask.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
                     maxLines = 1
                 )
                 Box(
@@ -244,6 +257,7 @@ fun TaskItem(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = toDoTask.description,
+                style = MaterialTheme.typography.bodyMedium,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
@@ -256,7 +270,7 @@ fun RedBackground(degrees: Float) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(HighPriorityColor)
+            .background(Color.Red)
             .padding(horizontal = LARGEST_PADDING),
         contentAlignment = Alignment.CenterEnd
     ) {
